@@ -1,0 +1,47 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin@1
+      POSTGRES_DB: db
+    ports:
+      - "5432:5432"
+    networks:
+      - app_network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api1:
+    build: .
+    container_name: api_container1
+    ports:
+      - "5001:5000"
+    networks:
+      - app_network
+
+  api2:
+    build: .
+    container_name: api_container2
+    ports:
+      - "5002:5000"
+    networks:
+      - app_network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_load_balancer
+    ports:
+      - "80:80"
+    networks:
+      - app_network
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+
+networks:
+  app_network:
+
+volumes:
+  postgres_data:
